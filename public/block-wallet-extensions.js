@@ -1,29 +1,31 @@
 /**
- * dev_todo is not a Web3 app. Wallet extensions (MetaMask, etc.) inject scripts that
- * can throw on unrelated sites. This runs before React and neutralizes that noise.
+ * dev_todo is not a Web3 app. Wallet extensions inject scripts that throw on unrelated sites.
  */
 (function () {
   "use strict";
 
   var EXTENSION_RE =
-    /metamask|chrome-extension:\/\/nkbihfbeogaeaoehlefnkodbefgpgknn|moz-extension:/i;
+    /metamask|failed to connect to metamask|extension not found|chrome-extension:\/\/nkbihfbeogaeaoehlefnkodbefgpgknn|moz-extension:/i;
 
-  function isWalletNoise(reason) {
+  function isWalletNoise(value) {
     try {
-      var s = String(
-        reason && (reason.stack || reason.message || reason),
-      );
-      return EXTENSION_RE.test(s);
+      return EXTENSION_RE.test(String(value));
     } catch (e) {
       return false;
     }
   }
 
-  function swallowEvent(event) {
-    if (
-      isWalletNoise(event.reason || event.error) ||
+  function isWalletNoiseEvent(event) {
+    return (
+      isWalletNoise(event.reason) ||
+      isWalletNoise(event.error) ||
+      isWalletNoise(event.message) ||
       EXTENSION_RE.test(event.filename || "")
-    ) {
+    );
+  }
+
+  function swallowEvent(event) {
+    if (isWalletNoiseEvent(event)) {
       event.preventDefault();
       event.stopImmediatePropagation();
       return true;
@@ -33,6 +35,23 @@
 
   window.addEventListener("unhandledrejection", swallowEvent, true);
   window.addEventListener("error", swallowEvent, true);
+
+  function filterConsoleArgs(args) {
+    var combined = "";
+    for (var i = 0; i < args.length; i++) {
+      combined += String(args[i]) + " ";
+    }
+    return EXTENSION_RE.test(combined);
+  }
+
+  ["error", "warn"].forEach(function (level) {
+    var original = console[level];
+    if (typeof original !== "function") return;
+    console[level] = function () {
+      if (filterConsoleArgs(arguments)) return;
+      original.apply(console, arguments);
+    };
+  });
 
   var noopProvider = {
     isMetaMask: false,
@@ -51,9 +70,7 @@
   };
 
   function patchProvider(provider) {
-    if (!provider || provider.__devTodoNeutralized) {
-      return provider;
-    }
+    if (!provider || provider.__devTodoNeutralized) return provider;
     try {
       provider.request = function () {
         return Promise.resolve(null);
@@ -73,19 +90,10 @@
 
   function neutralizeEthereum() {
     try {
-      if (window.ethereum) {
-        patchProvider(window.ethereum);
-      }
-    } catch (e) {
-      /* ignore */
-    }
-
-    try {
+      if (window.ethereum) patchProvider(window.ethereum);
       var providers = window.ethereum && window.ethereum.providers;
       if (Array.isArray(providers)) {
-        for (var i = 0; i < providers.length; i++) {
-          patchProvider(providers[i]);
-        }
+        for (var i = 0; i < providers.length; i++) patchProvider(providers[i]);
       }
     } catch (e) {
       /* ignore */
@@ -100,8 +108,6 @@
   var interval = setInterval(function () {
     neutralizeEthereum();
     ticks += 1;
-    if (ticks > 40) {
-      clearInterval(interval);
-    }
+    if (ticks > 40) clearInterval(interval);
   }, 250);
 })();

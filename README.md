@@ -14,12 +14,18 @@ Next.js App Router, Auth.js, Prisma, **Supabase Postgres**, Vercel Blob, Tailwin
 
 ## Browser extensions (MetaMask)
 
-This app does **not** use Web3 or MetaMask. If you still see `Failed to connect to MetaMask`, that is the **MetaMask browser extension** (or a broken partial install) injecting into every tab—not this codebase.
+This app does **not** use Web3 or MetaMask.
 
-1. **Best fix:** In Chrome → Extensions → MetaMask → **Remove** or turn **Off**, or disable “Allow on localhost”.
-2. The app loads `/block-wallet-extensions.js` to swallow extension errors and no-op `ethereum.connect` on this site only.
+| Log line | Meaning |
+|----------|---------|
+| `GET /api/auth/session 200` | **Normal** — Auth.js checking your login (not an error). |
+| `[browser] Failed to connect to MetaMask` | **MetaMask Chrome extension** — not from this repo. |
 
-If errors persist after disabling the extension, restart the browser (stale `inpage.js` can remain until restart).
+Next.js used to print extension console output in the terminal as `[browser] …`. Dev config sets `logging.browserToTerminal: false` so that noise stays out of your server log.
+
+**To stop MetaMask completely:** Chrome → Extensions → MetaMask → **Off** or **Remove**, then restart Chrome (broken installs can leave `inpage.js` running).
+
+The site also loads `/block-wallet-extensions.js` to ignore wallet extension errors in the page.
 
 ## Local setup
 

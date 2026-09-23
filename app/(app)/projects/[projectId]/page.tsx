@@ -4,7 +4,6 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getProjectForUser } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { Button } from "@/components/ui/button";
 
 export default async function ProjectHubPage({
   params,
@@ -28,21 +27,24 @@ export default async function ProjectHubPage({
   }
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-xl font-semibold">{project.name}</h1>
-      <p className="text-sm text-muted-foreground">Todo lists in this project</p>
-      <ul className="space-y-2">
+    <div className="mx-auto max-w-2xl p-4">
+      <h1 className="text-sm font-semibold">{project.name}</h1>
+      <p className="mt-1 text-xs text-muted-foreground">Select a list</p>
+      <ul className="mt-3 divide-y rounded-md border text-sm">
         {lists.map((list) => (
           <li key={list.id}>
-            <Link href={`/projects/${projectId}/lists/${list.id}`}>
-              <Button variant="outline">{list.title}</Button>
+            <Link
+              href={`/projects/${projectId}/lists/${list.id}`}
+              className="block px-3 py-2 hover:bg-muted/50"
+            >
+              {list.title}
             </Link>
           </li>
         ))}
       </ul>
       {lists.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          No lists yet. Create one from the sidebar.
+        <p className="mt-3 text-xs text-muted-foreground">
+          No lists yet — create one from the sidebar.
         </p>
       )}
     </div>

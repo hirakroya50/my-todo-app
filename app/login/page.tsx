@@ -14,7 +14,7 @@ export default async function LoginPage() {
   );
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
+    <main className="flex min-h-dvh items-center justify-center bg-muted/30 px-4">
       <LoginForm hasGoogle={hasGoogle} hasGitHub={hasGitHub} />
     </main>
   );

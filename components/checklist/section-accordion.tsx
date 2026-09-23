@@ -46,15 +46,17 @@ export function SectionAccordionItem({
     attachments.filter((a) => a.todoItemId === itemId).length;
 
   return (
-    <AccordionItem value={section.id}>
-      <AccordionTrigger className="sticky top-0 z-10 bg-background/95 backdrop-blur">
-        <span className="flex-1 text-left">{section.title}</span>
-        <span className="mr-2 text-xs text-muted-foreground">
+    <AccordionItem value={section.id} className="border-border/60">
+      <AccordionTrigger className="py-2 hover:no-underline">
+        <span className="flex-1 truncate text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {section.title}
+        </span>
+        <span className="mr-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
           {done}/{section.items.length}
         </span>
       </AccordionTrigger>
-      <AccordionContent>
-        <div className="grid gap-2 lg:grid-cols-2">
+      <AccordionContent className="pb-2">
+        <div className="grid gap-x-6 gap-y-0 lg:grid-cols-2">
           {items.map((item) => (
             <TodoItemRow
               key={item.id}

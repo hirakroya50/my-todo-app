@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
 import { getLastProjectId } from "@/lib/cookies";
 import * as projectService from "@/lib/services/project.service";
 
@@ -32,27 +31,27 @@ export default async function ProjectsPage() {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-xl font-semibold">Your projects</h1>
-      <p className="max-w-md text-sm text-muted-foreground">
-        Create a project from the sidebar, then add a todo list from the Software
-        Development template.
-      </p>
-      {projects.length === 0 ? (
-        <p className="text-sm">No projects yet — use the sidebar to add one.</p>
-      ) : (
-        <ul className="space-y-2 text-left">
-          {projects.map((project) => (
-            <li key={project.id}>
-              <Link href={`/projects/${project.id}`}>
-                <Button variant="link" className="px-0">
+    <div className="flex h-full items-center justify-center p-4">
+      <div className="max-w-sm text-center">
+        <h1 className="text-sm font-semibold">Projects</h1>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Use the sidebar to add a project and template list.
+        </p>
+        {projects.length > 0 && (
+          <ul className="mt-4 divide-y rounded-md border text-left text-sm">
+            {projects.map((project) => (
+              <li key={project.id}>
+                <Link
+                  href={`/projects/${project.id}`}
+                  className="block px-3 py-2 hover:bg-muted/50"
+                >
                   {project.name}
-                </Button>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

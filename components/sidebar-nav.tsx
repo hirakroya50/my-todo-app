@@ -52,57 +52,59 @@ export function SidebarNav({ projects }: { projects: SidebarProject[] }) {
         return;
       }
       setNewListTitle("");
-      toast.success("List created from template");
+      toast.success("List created");
     });
   };
 
   return (
-    <div className="flex h-full flex-col gap-4 p-3">
-      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Projects
-      </div>
-      <div className="flex gap-2">
+    <div className="flex h-full min-h-0 flex-col gap-2 p-2 text-sm">
+      <div className="flex gap-1">
         <Input
+          className="h-8 text-xs"
           placeholder="New project"
           value={newProjectName}
           onChange={(e) => setNewProjectName(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onCreateProject()}
         />
         <Button
           type="button"
           size="icon"
+          className="size-8 shrink-0"
           disabled={pending}
           onClick={onCreateProject}
           aria-label="Add project"
         >
-          <PlusIcon className="size-4" />
+          <PlusIcon className="size-3.5" />
         </Button>
       </div>
-      <div className="flex-1 space-y-3 overflow-y-auto">
+      <nav className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
         {projects.map((project) => (
-          <div key={project.id} className="space-y-1">
+          <div key={project.id}>
             <Link
               href={`/projects/${project.id}`}
               onClick={() => setActiveProjectId(project.id)}
               className={cn(
-                "block rounded-md px-2 py-1.5 text-sm font-medium hover:bg-accent",
-                pathname.includes(`/projects/${project.id}`) && "bg-accent",
+                "block truncate rounded px-2 py-1 text-xs font-medium hover:bg-accent",
+                pathname.includes(`/projects/${project.id}`) &&
+                  "bg-accent text-accent-foreground",
               )}
             >
               {project.name}
             </Link>
-            <ul className="space-y-0.5 pl-3">
+            <ul className="mt-0.5 space-y-px border-l border-border/80 pl-2 ml-2">
               {project.todoLists.map((list) => {
                 const href = `/projects/${project.id}/lists/${list.id}`;
+                const active = pathname === href;
                 return (
                   <li key={list.id}>
                     <Link
                       href={href}
                       className={cn(
-                        "block rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
-                        pathname === href && "bg-accent text-foreground",
+                        "block truncate rounded px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-accent hover:text-foreground",
+                        active && "bg-primary/10 font-medium text-foreground",
                       )}
                     >
-                      · {list.title}
+                      {list.title}
                     </Link>
                   </li>
                 );
@@ -110,22 +112,23 @@ export function SidebarNav({ projects }: { projects: SidebarProject[] }) {
             </ul>
           </div>
         ))}
-      </div>
-      <div className="space-y-2 border-t pt-3">
-        <div className="text-xs text-muted-foreground">New list (template)</div>
+      </nav>
+      <div className="shrink-0 space-y-1 border-t pt-2">
         <Input
-          placeholder="List title"
+          className="h-8 text-xs"
+          placeholder="New list title"
           value={newListTitle}
           onChange={(e) => setNewListTitle(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onCreateList()}
         />
         <Button
           type="button"
-          className="w-full"
-          size="sm"
+          className="h-8 w-full text-xs"
+          variant="secondary"
           disabled={pending || !activeProjectId}
           onClick={onCreateList}
         >
-          + List from template
+          + Template list
         </Button>
       </div>
     </div>

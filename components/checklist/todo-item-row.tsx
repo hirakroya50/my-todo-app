@@ -1,6 +1,11 @@
 "use client";
 
-import { ExternalLinkIcon, LinkIcon, MoreVerticalIcon, PaperclipIcon } from "lucide-react";
+import {
+  ExternalLinkIcon,
+  LinkIcon,
+  MoreHorizontalIcon,
+  PaperclipIcon,
+} from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -128,8 +133,8 @@ export function TodoItemRow({
   return (
     <div
       className={cn(
-        "flex items-start gap-2 rounded-md border p-2",
-        checked && "opacity-70",
+        "group flex items-center gap-2 rounded-sm px-1 py-0.5 hover:bg-muted/60",
+        checked && "opacity-60",
       )}
     >
       <Checkbox
@@ -137,50 +142,57 @@ export function TodoItemRow({
         disabled={pending}
         aria-checked={checked}
         onCheckedChange={(v) => toggle(v === true)}
-        className="mt-0.5"
+        className="size-3.5 shrink-0"
       />
-      <div className="min-w-0 flex-1 space-y-1">
-        <Input
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">
+        <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={saveTitle}
-          className="h-8 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+          className="h-6 min-w-0 flex-1 truncate bg-transparent text-[13px] leading-tight outline-none focus:ring-1 focus:ring-ring/40 rounded-sm px-0.5"
         />
         {item.linkUrl && (
           <a
             href={item.linkUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            className="shrink-0 text-primary hover:text-primary/80"
+            title={item.linkUrl}
           >
             <ExternalLinkIcon className="size-3" />
-            Link
           </a>
         )}
-      </div>
-      <div className="flex items-center gap-1">
         {attachmentCount > 0 && (
-          <span className="text-xs text-muted-foreground" title="Attachments">
-            <PaperclipIcon className="size-3.5 inline" /> {attachmentCount}
+          <span className="shrink-0 text-[10px] text-muted-foreground" title="Attachments">
+            <PaperclipIcon className="size-3 inline" />
+            {attachmentCount}
           </span>
         )}
+      </div>
+      <div className="flex shrink-0 items-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100">
         <Dialog>
           <DialogTrigger asChild>
-            <Button type="button" size="icon" variant="ghost" aria-label="Set link">
-              <LinkIcon className="size-4" />
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="size-6"
+              aria-label="Set link"
+            >
+              <LinkIcon className="size-3" />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Item link URL</DialogTitle>
+              <DialogTitle>Link URL</DialogTitle>
             </DialogHeader>
             <Input
               placeholder="https://…"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
             />
-            <Button type="button" onClick={saveLink} disabled={pending}>
-              Save link
+            <Button type="button" size="sm" onClick={saveLink} disabled={pending}>
+              Save
             </Button>
           </DialogContent>
         </Dialog>
@@ -199,25 +211,32 @@ export function TodoItemRow({
           type="button"
           size="icon"
           variant="ghost"
+          className="size-6"
           aria-label="Upload screenshot"
           onClick={() => fileRef.current?.click()}
         >
-          <PaperclipIcon className="size-4" />
+          <PaperclipIcon className="size-3" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button type="button" size="icon" variant="ghost" aria-label="More">
-              <MoreVerticalIcon className="size-4" />
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="size-6"
+              aria-label="More"
+            >
+              <MoreHorizontalIcon className="size-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="min-w-[8rem]">
             {canMoveUp && (
               <DropdownMenuItem onClick={() => move("up")}>Move up</DropdownMenuItem>
             )}
             {canMoveDown && (
               <DropdownMenuItem onClick={() => move("down")}>Move down</DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={onDelete}>Delete item</DropdownMenuItem>
+            <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

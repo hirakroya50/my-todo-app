@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm({ hasGoogle, hasGitHub }: { hasGoogle: boolean; hasGitHub: boolean }) {
+export function LoginForm({
+  hasGoogle,
+  hasGitHub,
+}: {
+  hasGoogle: boolean;
+  hasGitHub: boolean;
+}) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +27,12 @@ export function LoginForm({ hasGoogle, hasGitHub }: { hasGoogle: boolean; hasGit
         const reg = await registerUser({ email, password });
         if ("error" in reg) {
           if (reg.error === "DATABASE_SCHEMA") {
-          toast.error("Database needs migration. Run: npx prisma migrate deploy");
-          return;
-        }
-        toast.error(reg.error === "EMAIL_EXISTS" ? "Email already registered" : "Sign up failed");
+            toast.error("Database needs migration. Run: npx prisma migrate deploy");
+            return;
+          }
+          toast.error(
+            reg.error === "EMAIL_EXISTS" ? "Email already registered" : "Sign up failed",
+          );
           return;
         }
       }
@@ -38,48 +46,56 @@ export function LoginForm({ hasGoogle, hasGitHub }: { hasGoogle: boolean; hasGit
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 p-6">
-      <div className="space-y-1 text-center">
-        <h1 className="text-2xl font-semibold">dev_todo</h1>
-        <p className="text-sm text-muted-foreground">
-          Dev checklist for your projects
+    <div className="w-full max-w-sm rounded-xl border bg-card p-6 shadow-sm">
+      <div className="mb-5 text-center">
+        <h1 className="text-lg font-semibold tracking-tight">dev_todo</h1>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Dev project checklists
         </p>
       </div>
 
-      <div className="flex gap-2">
-        <Button
+      <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+        <button
           type="button"
-          variant={mode === "signin" ? "default" : "outline"}
-          className="flex-1"
+          className={`rounded-md py-1.5 text-xs font-medium transition-colors ${
+            mode === "signin"
+              ? "bg-background shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => setMode("signin")}
         >
           Sign in
-        </Button>
-        <Button
+        </button>
+        <button
           type="button"
-          variant={mode === "signup" ? "default" : "outline"}
-          className="flex-1"
+          className={`rounded-md py-1.5 text-xs font-medium transition-colors ${
+            mode === "signup"
+              ? "bg-background shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => setMode("signup")}
         >
           Sign up
-        </Button>
+        </button>
       </div>
 
-      <div className="space-y-3 rounded-lg border p-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-xs">Email</Label>
           <Input
             id="email"
+            className="h-9"
             type="email"
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="text-xs">Password</Label>
           <Input
             id="password"
+            className="h-9"
             type="password"
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             value={password}
@@ -88,22 +104,25 @@ export function LoginForm({ hasGoogle, hasGitHub }: { hasGoogle: boolean; hasGit
         </div>
         <Button
           type="button"
-          className="w-full"
+          className="h-9 w-full"
           disabled={pending}
           onClick={onCredentials}
         >
-          {mode === "signup" ? "Create account" : "Sign in with email"}
+          {mode === "signup" ? "Create account" : "Continue"}
         </Button>
       </div>
 
       {(hasGoogle || hasGitHub) && (
-        <div className="space-y-2">
-          <div className="text-center text-xs text-muted-foreground">Or continue with</div>
-          <div className="flex flex-col gap-2">
+        <div className="mt-4 space-y-2 border-t pt-4">
+          <p className="text-center text-[10px] uppercase tracking-wide text-muted-foreground">
+            OAuth
+          </p>
+          <div className="grid gap-2">
             {hasGoogle && (
               <Button
                 type="button"
                 variant="outline"
+                className="h-9"
                 onClick={() => signIn("google", { callbackUrl: "/projects" })}
               >
                 Google
@@ -113,6 +132,7 @@ export function LoginForm({ hasGoogle, hasGitHub }: { hasGoogle: boolean; hasGit
               <Button
                 type="button"
                 variant="outline"
+                className="h-9"
                 onClick={() => signIn("github", { callbackUrl: "/projects" })}
               >
                 GitHub

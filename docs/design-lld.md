@@ -102,7 +102,8 @@ flowchart TB
 
 | ID | Use case | Preconditions | Main flow | Postcondition |
 |----|----------|---------------|-----------|---------------|
-| UC-01 | Sign in | Logged out | OAuth redirect → session in DB | Session cookie set |
+| UC-01 | Sign in | Logged out | OAuth redirect or credentials → JWT session | Session cookie set |
+| UC-01b | Register (email/password) | Logged out | Sign up form → hash password → sign in | User row + session |
 | UC-02 | Create project | Authenticated | Name → `ProjectService.create` | Project owned by user |
 | UC-03 | Create todo list | Owns project | Title + template or blank → optional `seedListFromTemplate` | List + sections/items if template |
 | UC-04 | Open checklist | Owns list | Load `ListTree` (sections, items, attachments) | UI renders per layout order |

@@ -57,7 +57,7 @@ flowchart TB
 | UI | Tailwind + shadcn/ui + next-themes | Keyboard/a11y on checkboxes and DnD |
 | Auth | Auth.js v5 + Prisma adapter | DB sessions; secure cookies in prod |
 | ORM | Prisma | Migrations in repo; no `db push` in prod |
-| DB | Neon or Vercel Postgres | Connection pooling (`?pgbouncer=true` if needed) |
+| DB | **Supabase Postgres** (pooled URI for serverless) | Prisma migrations in repo |
 | Blob | Vercel Blob | Store `pathname` or URL for delete |
 | Validation | Zod | Shared input schemas actions + API |
 | DnD | @dnd-kit | Accessible drag handles |
@@ -161,7 +161,7 @@ Every server action starts with session user id + `assertListAccess`. **Integrat
 
 ## Auth
 
-- Providers: **Google**, **GitHub**.
+- Providers: **Google**, **GitHub**, **Credentials** (email + password; no email verification; `User.passwordHash`).
 - Env: `AUTH_SECRET`, `AUTH_URL` (prod), provider secrets, `DATABASE_URL`.
 - Routes: `/login`; protect `/(app)/**` via middleware matcher.
 - Callback URLs: **separate** for localhost, Vercel preview (`*.vercel.app`), and production domain.

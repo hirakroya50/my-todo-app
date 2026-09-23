@@ -1,0 +1,31 @@
+export class AppError extends Error {
+  readonly code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AppError";
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message = "Forbidden") {
+    super("FORBIDDEN", message);
+    this.name = "ForbiddenError";
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message = "Not found") {
+    super("NOT_FOUND", message);
+    this.name = "NotFoundError";
+  }
+}
+
+export function toActionError(error: unknown): { error: string } {
+  if (error instanceof AppError) {
+    return { error: error.code };
+  }
+  console.error(error);
+  return { error: "INTERNAL" };
+}

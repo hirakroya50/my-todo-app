@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# dev_todo
 
-## Getting Started
+Personal dev project checklists: **projects → lists → sections & checkbox items**, optional **links** and **screenshot attachments**, with **Google**, **GitHub**, and **email/password** sign-in (no email verification).
 
-First, run the development server:
+## Docs
+
+- [Implementation plan](docs/dev-todo-plan.md)
+- [Design & LLD](docs/design-lld.md)
+- [Default template content](docs/software-dev-template.md)
+
+## Stack
+
+Next.js App Router, Auth.js, Prisma, **Supabase Postgres**, Vercel Blob, Tailwind + shadcn-style UI.
+
+## Browser extensions (MetaMask)
+
+This app does **not** use Web3 or MetaMask. If you still see `Failed to connect to MetaMask`, that is the **MetaMask browser extension** (or a broken partial install) injecting into every tab—not this codebase.
+
+1. **Best fix:** In Chrome → Extensions → MetaMask → **Remove** or turn **Off**, or disable “Allow on localhost”.
+2. The app loads `/block-wallet-extensions.js` to swallow extension errors and no-op `ethereum.connect` on this site only.
+
+If errors persist after disabling the extension, restart the browser (stale `inpage.js` can remain until restart).
+
+## Local setup
+
+1. Copy `.env.example` to `.env.local` and fill values.
+2. Create a [Supabase](https://supabase.com) project → **Settings → Database** → copy the **URI** (use the pooler URL for serverless if deploying to Vercel).
+3. Run migrations:
+
+```bash
+npm install
+npx prisma migrate dev
+```
+
+4. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:43123](http://localhost:43123).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | Supabase Postgres connection string |
+| `AUTH_SECRET` | Yes | `openssl rand -base64 32` |
+| `AUTH_URL` | Prod | Canonical site URL |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth | Google sign-in |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth | GitHub sign-in |
+| `BLOB_READ_WRITE_TOKEN` | Uploads | Vercel Blob token |
+| `MAX_ATTACHMENT_BYTES` | No | Default 5MB |
+| `MAX_ATTACHMENTS_PER_LIST` | No | Default 50 |
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server |
+| `npm run build` | `prisma generate` + production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run test` | Vitest |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy (Vercel)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Import repo, set env vars (same as above).
+2. Build runs `prisma generate` via `postinstall`; run **`prisma migrate deploy`** in the build command or as a release step, e.g.  
+   `npx prisma migrate deploy && npm run build`
+3. Register OAuth redirect URLs for production and preview hosts.
+4. Create a Vercel Blob store and set `BLOB_READ_WRITE_TOKEN`.
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```mermaid
+flowchart LR
+  UI[Browser] --> Next[Next.js]
+  Next --> Auth[Auth.js]
+  Next --> PG[(Supabase_Postgres)]
+  Next --> Blob[Vercel_Blob]
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All mutations use server actions or route handlers with ownership checks in `lib/permissions.ts`.

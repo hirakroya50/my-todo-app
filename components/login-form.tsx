@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { registerUser } from "@/app/actions/auth";
+import { LoginAuthNotice } from "@/components/login-auth-notice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +14,11 @@ import { APP_DISPLAY_NAME } from "@/lib/constants/app";
 export function LoginForm({
   hasGoogle,
   hasGitHub,
+  authError,
 }: {
   hasGoogle: boolean;
   hasGitHub: boolean;
+  authError?: string;
 }) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -63,6 +66,8 @@ export function LoginForm({
           Sign in to manage your projects
         </p>
       </div>
+
+      <LoginAuthNotice authError={authError} />
 
       <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
         <button

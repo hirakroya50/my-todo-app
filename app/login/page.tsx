@@ -1,13 +1,19 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { LoginAuthNotice } from "@/components/login-auth-notice";
 import { LoginForm } from "@/components/login-form";
 import { APP_DISPLAY_NAME, APP_TAGLINE } from "@/lib/constants/app";
 import { githubOAuthEnv, googleOAuthEnv } from "@/lib/oauth-env";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   const session = await auth();
   if (session?.user) redirect("/projects");
+  const { error: authError } = await searchParams;
   const hasGoogle = Boolean(googleOAuthEnv());
   const hasGitHub = Boolean(githubOAuthEnv());
 
@@ -29,7 +35,11 @@ export default async function LoginPage() {
         </ul>
       </section>
       <section className="flex flex-1 items-center justify-center bg-background px-4 py-10">
-        <LoginForm hasGoogle={hasGoogle} hasGitHub={hasGitHub} />
+        <LoginForm
+          hasGoogle={hasGoogle}
+          hasGitHub={hasGitHub}
+          authError={authError}
+        />
       </section>
     </main>
   );

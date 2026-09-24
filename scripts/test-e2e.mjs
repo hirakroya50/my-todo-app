@@ -37,6 +37,9 @@ if (!process.env.AUTH_SECRET) {
 }
 
 const env = { ...process.env, DATABASE_URL: e2eUrl };
+if (env.PLAYWRIGHT_BROWSERS_PATH?.includes("sandbox-cache")) {
+  delete env.PLAYWRIGHT_BROWSERS_PATH;
+}
 
 function run(command, args) {
   const result = spawnSync(command, args, { stdio: "inherit", env });

@@ -8,7 +8,9 @@ import { authErrorMessage } from "@/lib/auth-errors";
 
 export function LoginAuthNotice({ authError }: { authError?: string }) {
   const router = useRouter();
-  const [message, setMessage] = useState<string | null>(null);
+  const [message] = useState(() =>
+    authError ? authErrorMessage(authError) : null,
+  );
   const handled = useRef(false);
 
   useEffect(() => {
@@ -18,7 +20,6 @@ export function LoginAuthNotice({ authError }: { authError?: string }) {
     const text = authErrorMessage(authError);
     if (!text) return;
 
-    setMessage(text);
     toast.error(text, { duration: 8000 });
 
     router.replace("/login", { scroll: false });

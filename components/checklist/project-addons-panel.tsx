@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import {
@@ -51,15 +51,11 @@ export function ProjectAddonsPanel({
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
-  const [addons, setAddons] = useState(initialAddons);
+  const addons = initialAddons;
   const [pending, startTransition] = useTransition();
   const [urlDraft, setUrlDraft] = useState("");
   const [showUrlForm, setShowUrlForm] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setAddons(initialAddons);
-  }, [initialAddons]);
 
   const refresh = () => router.refresh();
 
@@ -223,7 +219,7 @@ export function ProjectAddonsPanel({
           )}
           {addons.map((addon) => (
             <AddonCard
-              key={addon.id}
+              key={`${addon.id}:${addon.textContent ?? ""}:${addon.url ?? ""}:${addon.imageUrl ?? ""}`}
               addon={addon}
               pending={pending}
               onSaveText={saveText}
@@ -252,11 +248,6 @@ function AddonCard({
 }) {
   const [text, setText] = useState(addon.textContent ?? "");
   const [url, setUrl] = useState(addon.url ?? "");
-
-  useEffect(() => {
-    setText(addon.textContent ?? "");
-    setUrl(addon.url ?? "");
-  }, [addon.textContent, addon.url]);
 
   return (
     <div

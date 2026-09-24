@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { LoginAuthNotice } from "@/components/login-auth-notice";
 import { LoginForm } from "@/components/login-form";
 import { APP_DISPLAY_NAME, APP_TAGLINE } from "@/lib/constants/app";
 import { githubOAuthEnv, googleOAuthEnv } from "@/lib/oauth-env";

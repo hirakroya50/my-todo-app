@@ -4,7 +4,10 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateListAction } from "@/app/actions/lists";
-import { ProjectNotesPanel } from "@/components/checklist/project-notes-panel";
+import {
+  ProjectAddonsPanel,
+  type ProjectAddonClient,
+} from "@/components/checklist/project-addons-panel";
 import { SectionAccordionItem } from "@/components/checklist/section-accordion";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -14,16 +17,16 @@ import type { ListTree } from "@/lib/types";
 
 export function ChecklistPageClient({
   projectId,
-  projectNotes,
+  projectAddons,
   tree,
 }: {
   projectId: string;
-  projectNotes: string;
+  projectAddons: ProjectAddonClient[];
   tree: ListTree;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterIncomplete, setFilterIncomplete] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(Boolean(projectNotes));
+  const [notesOpen, setNotesOpen] = useState(projectAddons.length > 0);
   const [title, setTitle] = useState(tree.list.title);
   const [pending, startTransition] = useTransition();
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
@@ -44,9 +47,9 @@ export function ChecklistPageClient({
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-muted/15">
-      <div className="sticky top-0 z-20 shrink-0 border-b bg-background/95 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-1.5">
+    <div className="flex h-full min-h-0 flex-col bg-gradient-to-b from-primary/5 to-muted/20">
+      <div className="sticky top-0 z-20 shrink-0 border-b border-primary/10 bg-background/90 backdrop-blur-md">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2">
           <Input
             className="h-7 min-w-[8rem] flex-1 border-transparent bg-transparent px-1 text-sm font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
             value={title}
@@ -55,10 +58,10 @@ export function ChecklistPageClient({
             onBlur={saveTitle}
           />
           <div className="flex items-center gap-1.5 text-[11px] tabular-nums text-muted-foreground">
-            <span className="rounded bg-muted px-1.5 py-0.5 font-medium text-foreground">
+            <span className="rounded-full bg-primary/15 px-2 py-0.5 font-semibold text-primary">
               {progress.done}/{progress.total}
             </span>
-            <span>{progress.percent}%</span>
+            <span className="font-medium text-foreground">{progress.percent}%</span>
           </div>
           <Input
             className="h-7 w-full max-w-[10rem] text-xs sm:w-36"
@@ -78,7 +81,7 @@ export function ChecklistPageClient({
           <Button
             type="button"
             size="sm"
-            variant="ghost"
+            variant="secondary"
             className="h-7 px-2 text-xs"
             onClick={() =>
               setExpanded(
@@ -91,7 +94,7 @@ export function ChecklistPageClient({
           <Button
             type="button"
             size="sm"
-            variant="ghost"
+            variant="outline"
             className="h-7 px-2 text-xs"
             onClick={() =>
               setExpanded(
@@ -102,9 +105,9 @@ export function ChecklistPageClient({
             Collapse
           </Button>
         </div>
-        <ProjectNotesPanel
+        <ProjectAddonsPanel
           projectId={projectId}
-          initialNotes={projectNotes}
+          initialAddons={projectAddons}
           open={notesOpen}
           onOpenChange={setNotesOpen}
         />
@@ -123,12 +126,13 @@ export function ChecklistPageClient({
           }}
           className="mx-auto w-full max-w-[1600px]"
         >
-          {tree.sections.map((section) => (
+          {tree.sections.map((section, sectionIndex) => (
             <SectionAccordionItem
               key={section.id}
               projectId={projectId}
               listId={tree.list.id}
               section={section}
+              sectionIndex={sectionIndex}
               searchQuery={searchQuery}
               filterIncomplete={filterIncomplete}
             />

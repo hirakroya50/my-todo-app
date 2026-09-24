@@ -6,7 +6,6 @@ import { toast } from "sonner";
 
 import {
   deleteItemAction,
-  reorderItemsAction,
   setCheckedAction,
   updateItemAction,
 } from "@/app/actions/items";
@@ -24,9 +23,7 @@ import { cn } from "@/lib/utils";
 export function TodoItemRow({
   projectId,
   listId,
-  sectionId,
   item,
-  sectionItems,
 }: {
   projectId: string;
   listId: string;
@@ -68,31 +65,11 @@ export function TodoItemRow({
     });
   };
 
-  const index = sectionItems.findIndex((i) => i.id === item.id);
-  const canMoveUp = index > 0;
-  const canMoveDown = index >= 0 && index < sectionItems.length - 1;
-
-  const move = (direction: "up" | "down") => {
-    const swapIndex = direction === "up" ? index - 1 : index + 1;
-    if (swapIndex < 0 || swapIndex >= sectionItems.length) return;
-    const orders = sectionItems.map((row, i) => {
-      if (i === index) return { id: row.id, sortOrder: swapIndex };
-      if (i === swapIndex) return { id: row.id, sortOrder: index };
-      return { id: row.id, sortOrder: i };
-    });
-    startTransition(async () => {
-      const result = await reorderItemsAction(projectId, listId, sectionId, {
-        orders,
-      });
-      if ("error" in result) toast.error("Could not reorder");
-    });
-  };
-
   return (
     <div
       className={cn(
-        "group flex items-center gap-1.5 rounded-sm px-0.5 py-0.5 hover:bg-muted/60",
-        checked && "opacity-55",
+        "group flex items-start gap-2 rounded-lg border border-border/60 bg-card/90 p-2 shadow-sm transition-colors hover:border-primary/25 hover:bg-card",
+        checked && "opacity-60",
       )}
     >
       <Checkbox
@@ -100,13 +77,15 @@ export function TodoItemRow({
         disabled={pending}
         aria-checked={checked}
         onCheckedChange={(v) => toggle(v === true)}
-        className="size-3.5 shrink-0"
+        className="mt-0.5 size-4 shrink-0"
       />
-      <input
+      <textarea
         value={title}
+        rows={1}
         onChange={(e) => setTitle(e.target.value)}
         onBlur={saveTitle}
-        className="h-5 min-w-0 flex-1 truncate bg-transparent text-[12px] leading-tight outline-none focus:ring-1 focus:ring-ring/30 rounded-sm px-0.5"
+        disabled={pending}
+        className="min-h-[1.25rem] min-w-0 flex-1 resize-none break-words bg-transparent text-sm font-medium leading-snug text-foreground outline-none focus:ring-1 focus:ring-ring/40 rounded-sm"
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -114,19 +93,13 @@ export function TodoItemRow({
             type="button"
             size="icon"
             variant="ghost"
-            className="size-5 shrink-0 opacity-0 group-hover:opacity-100"
+            className="size-6 shrink-0 opacity-0 group-hover:opacity-100"
             aria-label="More"
           >
-            <MoreHorizontalIcon className="size-3" />
+            <MoreHorizontalIcon className="size-3.5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-[7rem]">
-          {canMoveUp && (
-            <DropdownMenuItem onClick={() => move("up")}>Move up</DropdownMenuItem>
-          )}
-          {canMoveDown && (
-            <DropdownMenuItem onClick={() => move("down")}>Move down</DropdownMenuItem>
-          )}
           <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

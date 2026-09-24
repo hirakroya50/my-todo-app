@@ -8,6 +8,7 @@ import { registerUser } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { APP_DISPLAY_NAME } from "@/lib/constants/app";
 
 export function LoginForm({
   hasGoogle,
@@ -46,20 +47,25 @@ export function LoginForm({
   };
 
   return (
-    <div className="w-full max-w-sm rounded-xl border bg-card p-6 shadow-sm">
-      <div className="mb-5 text-center">
-        <h1 className="text-lg font-semibold tracking-tight">dev_todo</h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Dev project checklists
+    <div className="w-full max-w-md rounded-2xl border border-primary/15 bg-card p-8 shadow-lg shadow-primary/5">
+      <div className="mb-6 text-center lg:text-left">
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-500 text-lg font-bold text-primary-foreground lg:mx-0">
+          B
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          {APP_DISPLAY_NAME}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sign in to manage your projects
         </p>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
         <button
           type="button"
-          className={`rounded-md py-1.5 text-xs font-medium transition-colors ${
+          className={`rounded-lg py-2 text-sm font-medium transition-colors ${
             mode === "signin"
-              ? "bg-background shadow-sm"
+              ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
           }`}
           onClick={() => setMode("signin")}
@@ -68,9 +74,9 @@ export function LoginForm({
         </button>
         <button
           type="button"
-          className={`rounded-md py-1.5 text-xs font-medium transition-colors ${
+          className={`rounded-lg py-2 text-sm font-medium transition-colors ${
             mode === "signup"
-              ? "bg-background shadow-sm"
+              ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
           }`}
           onClick={() => setMode("signup")}
@@ -79,23 +85,23 @@ export function LoginForm({
         </button>
       </div>
 
-      <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-xs">Email</Label>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
-            className="h-9"
+            className="h-10"
             type="email"
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="password" className="text-xs">Password</Label>
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
-            className="h-9"
+            className="h-10"
             type="password"
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             value={password}
@@ -104,7 +110,7 @@ export function LoginForm({
         </div>
         <Button
           type="button"
-          className="h-9 w-full"
+          className="h-10 w-full"
           disabled={pending}
           onClick={onCredentials}
         >
@@ -113,16 +119,16 @@ export function LoginForm({
       </div>
 
       {(hasGoogle || hasGitHub) && (
-        <div className="mt-4 space-y-2 border-t pt-4">
-          <p className="text-center text-[10px] uppercase tracking-wide text-muted-foreground">
-            OAuth
+        <div className="mt-6 space-y-3 border-t pt-6">
+          <p className="text-center text-xs text-muted-foreground">
+            Or continue with
           </p>
           <div className="grid gap-2">
             {hasGoogle && (
               <Button
                 type="button"
                 variant="outline"
-                className="h-9"
+                className="h-10"
                 onClick={() => signIn("google", { callbackUrl: "/projects" })}
               >
                 Google
@@ -132,7 +138,7 @@ export function LoginForm({
               <Button
                 type="button"
                 variant="outline"
-                className="h-9"
+                className="h-10"
                 onClick={() => signIn("github", { callbackUrl: "/projects" })}
               >
                 GitHub

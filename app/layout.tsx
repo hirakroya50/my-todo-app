@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import { AuthSessionProvider } from "@/components/session-provider";
+import { APP_DISPLAY_NAME } from "@/lib/constants/app";
 
 import "./globals.css";
 
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "dev_todo",
-  description: "Personal dev project checklists",
+  title: APP_DISPLAY_NAME,
+  description: "Personal dev project checklists and delivery notes",
 };
 
 export default function RootLayout({

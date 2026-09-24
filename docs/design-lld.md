@@ -21,9 +21,9 @@ flowchart LR
 
 **Shell:** Narrow sidebar (`~11rem`) with projects, three reference guide dialogs (Workflow / Phases / Checklist), and footer (email, theme, logout). No top app header.
 
-**Project model:** Creating a project auto-seeds one template `TodoList`. `Project.notes` is a single text field (not per checkbox).
+**Project model:** Creating a project auto-seeds one template `TodoList`. **Project notes** are `ProjectAddon` rows (`TEXT`, `URL`, `IMAGE`) ordered by `sortOrder`; legacy `Project.notes` was backfilled into TEXT add-ons.
 
-**Render order in main column:** Sticky bar (title, progress, filter, expand/collapse) → collapsible **Project notes** → `SectionAccordion[]` with items in a 1–4 column grid.
+**Render order in main column:** Sticky bar (title, progress, filter, expand/collapse) → collapsible **Project notes** (+ menu for text/link/image blocks) → `SectionAccordion[]` with items in a 1–4 column grid.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐

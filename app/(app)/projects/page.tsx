@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { auth } from "@/auth";
 import { getLastProjectId } from "@/lib/cookies";
 import * as projectService from "@/lib/services/project.service";
 
 export default async function ProjectsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-
-  const projects = await projectService.listProjects(session.user.id);
-  const lastProjectId = await getLastProjectId(session.user.id);
+  const projects = await projectService.listProjects();
+  const lastProjectId = await getLastProjectId("");
 
   if (lastProjectId) {
     const match = projects.find((p) => p.id === lastProjectId);

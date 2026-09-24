@@ -1,6 +1,6 @@
 # dev_todo
 
-Personal dev checklists: **one project = one auto-seeded template list** (sections & checkbox items), **project-level notes**, sidebar **workflow guides**, with **Google**, **GitHub**, and **email/password** sign-in (no email verification).
+Personal dev checklists: **one project = one auto-seeded template list** (sections & checkbox items), **project-level notes**, and sidebar **workflow guides**. **No login** — one shared workspace; anyone with the URL can view and edit.
 
 ## Docs
 
@@ -10,7 +10,7 @@ Personal dev checklists: **one project = one auto-seeded template list** (sectio
 
 ## Stack
 
-Next.js App Router, Auth.js, Prisma, **Supabase Postgres**, Vercel Blob, Tailwind + shadcn-style UI.
+Next.js App Router, Prisma, **Supabase Postgres**, Vercel Blob, Tailwind + shadcn-style UI.
 
 ## Browser extensions (MetaMask)
 
@@ -18,7 +18,6 @@ This app does **not** use Web3 or MetaMask.
 
 | Log line | Meaning |
 |----------|---------|
-| `GET /api/auth/session 200` | **Normal** — Auth.js checking your login (not an error). |
 | `[browser] Failed to connect to MetaMask` | **MetaMask Chrome extension** — not from this repo. |
 
 Next.js used to print extension console output in the terminal as `[browser] …`. Dev config sets `logging.browserToTerminal: false` so that noise stays out of your server log.
@@ -51,10 +50,6 @@ Open [http://localhost:43123](http://localhost:43123).
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | Supabase Postgres connection string |
-| `AUTH_SECRET` | Yes | `openssl rand -base64 32` |
-| `AUTH_URL` | Prod | Canonical site URL |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth | Google sign-in |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth | GitHub sign-in |
 | `BLOB_READ_WRITE_TOKEN` | Uploads | Vercel Blob token |
 | `MAX_ATTACHMENT_BYTES` | No | Default 5MB |
 | `MAX_ATTACHMENTS_PER_LIST` | No | Default 50 |

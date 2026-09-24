@@ -34,7 +34,7 @@ describe("permissions", () => {
     const result = await getProjectForUser("u1", "p1", db as never);
     expect(result).toEqual(project);
     expect(db.project.findFirst).toHaveBeenCalledWith({
-      where: { id: "p1", userId: "u1" },
+      where: { id: "p1" },
     });
   });
 
@@ -46,7 +46,7 @@ describe("permissions", () => {
     );
   });
 
-  it("getListForUser scopes by user via project", async () => {
+  it("getListForUser loads list by id", async () => {
     const db = createMockDb();
     const list = {
       id: "l1",
@@ -61,7 +61,7 @@ describe("permissions", () => {
     expect(result).toEqual(list);
   });
 
-  it("assertListAccess throws for cross-user list", async () => {
+  it("assertListAccess throws when list missing", async () => {
     const db = createMockDb();
     db.todoList.findFirst.mockResolvedValue(null);
     await expect(assertListAccess("u2", "l1", db as never)).rejects.toBeInstanceOf(

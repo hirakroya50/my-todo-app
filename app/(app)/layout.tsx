@@ -1,6 +1,3 @@
-import { redirect } from "next/navigation";
-
-import { auth } from "@/auth";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -13,19 +10,12 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  const projects = await projectService.listProjects(session.user.id);
+  const projects = await projectService.listProjects();
   const sidebarProjects = projects.map((p) => ({
     id: p.id,
     name: p.name,
     listId: p.todoLists[0]?.id ?? null,
   }));
-
-  const userLabel = session.user.email ?? session.user.name ?? "Account";
 
   return (
     <div className="flex h-dvh overflow-hidden">
@@ -41,7 +31,7 @@ export default async function AppLayout({
           </span>
         </div>
         <div className="min-h-0 flex-1">
-          <SidebarNav projects={sidebarProjects} userLabel={userLabel} />
+          <SidebarNav projects={sidebarProjects} />
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
@@ -57,7 +47,7 @@ export default async function AppLayout({
                 {APP_DISPLAY_NAME}
               </div>
               <div className="h-[calc(100%-2.25rem)]">
-                <SidebarNav projects={sidebarProjects} userLabel={userLabel} />
+                <SidebarNav projects={sidebarProjects} />
               </div>
             </SheetContent>
           </Sheet>

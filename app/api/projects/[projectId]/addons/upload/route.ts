@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
 import { toActionError } from "@/lib/errors";
 import * as addonService from "@/lib/services/project-addon.service";
+import { requireUserId } from "@/lib/session";
 
 export async function POST(
   request: Request,
   context: { params: Promise<{ projectId: string }> },
 ) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
-
+  const userId = await requireUserId();
   const { projectId } = await context.params;
 
   try {

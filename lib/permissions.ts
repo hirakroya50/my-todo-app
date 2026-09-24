@@ -10,12 +10,12 @@ type DbLike = Pick<
 >;
 
 export async function getProjectForUser(
-  userId: string,
+  _userId: string,
   projectId: string,
   client: DbLike = db,
 ) {
   return client.project.findFirst({
-    where: { id: projectId, userId },
+    where: { id: projectId },
   });
 }
 
@@ -25,10 +25,7 @@ export async function getListForUser(
   client: DbLike = db,
 ): Promise<TodoListWithProject | null> {
   return client.todoList.findFirst({
-    where: {
-      id: todoListId,
-      project: { userId },
-    },
+    where: { id: todoListId },
     include: { project: true },
   });
 }
@@ -65,11 +62,6 @@ export async function resolveItemListId(
   const item = await client.todoItem.findFirst({
     where: {
       id: itemId,
-      section: {
-        todoList: {
-          project: { userId },
-        },
-      },
     },
     select: {
       section: { select: { todoListId: true } },
@@ -89,10 +81,7 @@ export async function assertSectionAccess(
   client: DbLike = db,
 ) {
   const section = await client.section.findFirst({
-    where: {
-      id: sectionId,
-      todoList: { project: { userId } },
-    },
+    where: { id: sectionId },
   });
   if (!section) {
     throw new NotFoundError();
@@ -106,12 +95,7 @@ export async function assertItemAccess(
   client: DbLike = db,
 ) {
   const item = await client.todoItem.findFirst({
-    where: {
-      id: itemId,
-      section: {
-        todoList: { project: { userId } },
-      },
-    },
+    where: { id: itemId },
   });
   if (!item) {
     throw new NotFoundError();

@@ -102,7 +102,7 @@ export async function uploadImageAddon(
 
 async function getOwnedAddon(userId: string, addonId: string) {
   const addon = await db.projectAddon.findFirst({
-    where: { id: addonId, project: { userId } },
+    where: { id: addonId },
   });
   if (!addon) {
     throw new AppError("NOT_FOUND", "Add-on not found");

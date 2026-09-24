@@ -1,6 +1,5 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
-import { auth } from "@/auth";
 import { ChecklistPageClient } from "@/components/checklist/checklist-page";
 import { getListForUser, getProjectForUser } from "@/lib/permissions";
 import * as addonService from "@/lib/services/project-addon.service";
@@ -11,21 +10,15 @@ export default async function ChecklistPage({
 }: {
   params: Promise<{ projectId: string; listId: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-
   const { projectId, listId } = await params;
-  const list = await getListForUser(session.user.id, listId);
+  const list = await getListForUser("", listId);
   if (!list || list.projectId !== projectId) notFound();
 
-  const project = await getProjectForUser(session.user.id, projectId);
+  const project = await getProjectForUser("", projectId);
   if (!project) notFound();
 
-  const tree = await listService.getFullTree(session.user.id, listId);
-  const addons = await addonService.listProjectAddons(
-    session.user.id,
-    projectId,
-  );
+  const tree = await listService.getFullTree("", listId);
+  const addons = await addonService.listProjectAddons("", projectId);
 
   return (
     <ChecklistPageClient

@@ -32,11 +32,6 @@ if (!e2eUrl) {
   process.exit(1);
 }
 
-if (!process.env.AUTH_SECRET) {
-  console.error("AUTH_SECRET is required to start the app for end-to-end tests.");
-  process.exit(1);
-}
-
 const env = { ...process.env, DATABASE_URL: e2eUrl };
 if (env.PLAYWRIGHT_BROWSERS_PATH?.includes("sandbox-cache")) {
   delete env.PLAYWRIGHT_BROWSERS_PATH;

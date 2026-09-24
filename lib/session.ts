@@ -1,11 +1,6 @@
-import { auth } from "@/auth";
-import { ForbiddenError } from "@/lib/errors";
+import { ensureAppUserId } from "@/lib/app-user";
 
+/** @deprecated Use ensureAppUserId; kept for server actions that still pass an owner id. */
 export async function requireUserId() {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
-    throw new ForbiddenError("Unauthorized");
-  }
-  return userId;
+  return ensureAppUserId();
 }

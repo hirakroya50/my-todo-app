@@ -19,13 +19,7 @@ export type SidebarProject = {
   listId: string | null;
 };
 
-export function SidebarNav({
-  projects,
-  userLabel,
-}: {
-  projects: SidebarProject[];
-  userLabel: string;
-}) {
+export function SidebarNav({ projects }: { projects: SidebarProject[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -92,7 +86,7 @@ export function SidebarNav({
         </nav>
         <ReferenceDialogs />
       </div>
-      <SidebarFooter userLabel={userLabel} />
+      <SidebarFooter />
     </div>
   );
 }

@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
 import { toActionError } from "@/lib/errors";
+import { requireUserId } from "@/lib/session";
 import * as attachmentService from "@/lib/services/attachment.service";
 
 export async function POST(
   request: Request,
   context: { params: Promise<{ listId: string }> },
 ) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
-
+  const userId = await requireUserId();
   const { listId } = await context.params;
 
   try {

@@ -118,10 +118,7 @@ export async function uploadAttachment(
 
 export async function deleteAttachment(userId: string, attachmentId: string) {
   const attachment = await db.itemAttachment.findFirst({
-    where: {
-      id: attachmentId,
-      todoList: { project: { userId } },
-    },
+    where: { id: attachmentId },
   });
   if (!attachment) {
     throw new AppError("NOT_FOUND", "Attachment not found");

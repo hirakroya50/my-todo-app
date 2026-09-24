@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { Providers } from "@/components/providers";
-import { AuthSessionProvider } from "@/components/session-provider";
 import { APP_DISPLAY_NAME } from "@/lib/constants/app";
 
 import "./globals.css";
@@ -34,9 +33,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full font-sans antialiased" suppressHydrationWarning>
-        <AuthSessionProvider>
-          <Providers>{children}</Providers>
-        </AuthSessionProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

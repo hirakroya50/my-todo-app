@@ -5,9 +5,8 @@ import type { SortOrderInput } from "@/lib/types";
 
 const DEFAULT_LIST_TITLE = "Development checklist";
 
-export async function listProjects(userId: string) {
+export async function listProjects() {
   return db.project.findMany({
-    where: { userId },
     orderBy: { sortOrder: "asc" },
     include: {
       todoLists: { orderBy: { sortOrder: "asc" }, take: 1 },
@@ -22,7 +21,6 @@ export async function getProjectNotes(userId: string, projectId: string) {
 
 export async function createProjectWithChecklist(userId: string, name: string) {
   const maxOrder = await db.project.aggregate({
-    where: { userId },
     _max: { sortOrder: true },
   });
   const sortOrder = (maxOrder._max.sortOrder ?? -1) + 1;
@@ -120,7 +118,7 @@ export async function reorderProjects(
   await db.$transaction(
     orders.map((order) =>
       db.project.updateMany({
-        where: { id: order.id, userId },
+        where: { id: order.id },
         data: { sortOrder: order.sortOrder },
       }),
     ),

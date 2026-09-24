@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowDownIcon,
-  BookOpenIcon,
-  GitBranchIcon,
-  ListChecksIcon,
-} from "lucide-react";
+import { BookOpenIcon, GitBranchIcon, ListChecksIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,36 +22,18 @@ const guideScrollBodyClass =
   "min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]";
 
 function WorkflowBody() {
-  const last = WORKFLOW_LADDER_STEPS.length - 1;
   return (
-    <ol className="flex w-full flex-col text-xs leading-snug">
+    <ol
+      className="grid w-full grid-cols-[repeat(auto-fill,minmax(4.75rem,1fr))] gap-x-2 gap-y-3 text-xs leading-snug sm:grid-cols-[repeat(auto-fill,minmax(5.25rem,1fr))]"
+    >
       {WORKFLOW_LADDER_STEPS.map((step, i) => (
-        <li key={step} className="flex w-full min-h-0 flex-row gap-2">
-          <div
-            className="flex w-5 shrink-0 flex-col items-center"
-            aria-hidden
-          >
-            <span
-              className="flex size-5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground"
-            >
-              {i + 1}
-            </span>
-            {i < last && (
-              <div className="flex flex-1 flex-col items-center py-0.5">
-                <div className="w-px min-h-2 flex-1 bg-primary/35" />
-                <ArrowDownIcon className="size-3 shrink-0 text-primary/55" />
-                <div className="w-px min-h-2 flex-1 bg-primary/35" />
-              </div>
-            )}
-          </div>
+        <li key={step} className="flex min-w-0 flex-col items-center text-center">
           <span
-            className={cn(
-              "min-w-0 flex-1 text-foreground",
-              i < last ? "pb-1" : "pb-0",
-            )}
+            className="flex size-5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground"
           >
-            {step}
+            {i + 1}
           </span>
+          <span className="mt-1.5 px-0.5 text-foreground">{step}</span>
         </li>
       ))}
     </ol>
@@ -139,7 +116,7 @@ export function ReferenceDialogs() {
             Workflow
           </Button>
         </DialogTrigger>
-        <DialogContent className={cn(guideDialogContentClass, "max-w-md")}>
+        <DialogContent className={guideDialogContentClass}>
           <DialogHeader className="shrink-0 space-y-1 pb-2">
             <DialogTitle className="text-base">Development workflow</DialogTitle>
           </DialogHeader>

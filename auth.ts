@@ -7,23 +7,27 @@ import Google from "next-auth/providers/google";
 
 import { authConfig } from "@/auth.config";
 import { db } from "@/lib/db";
+import { githubOAuthEnv, googleOAuthEnv } from "@/lib/oauth-env";
 import { credentialsLoginSchema } from "@/lib/schemas/auth";
 
+const googleOAuth = googleOAuthEnv();
+const githubOAuth = githubOAuthEnv();
+
 const providers = [
-  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+  ...(googleOAuth
     ? [
         Google({
-          clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          clientId: googleOAuth.clientId,
+          clientSecret: googleOAuth.clientSecret,
           allowDangerousEmailAccountLinking: false,
         }),
       ]
     : []),
-  ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+  ...(githubOAuth
     ? [
         GitHub({
-          clientId: process.env.GITHUB_CLIENT_ID,
-          clientSecret: process.env.GITHUB_CLIENT_SECRET,
+          clientId: githubOAuth.clientId,
+          clientSecret: githubOAuth.clientSecret,
           allowDangerousEmailAccountLinking: false,
         }),
       ]

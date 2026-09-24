@@ -31,6 +31,10 @@ export function LoginForm({
             toast.error("Database needs migration. Run: npx prisma migrate deploy");
             return;
           }
+          if (reg.error === "VALIDATION" && "message" in reg) {
+            toast.error(reg.message);
+            return;
+          }
           toast.error(
             reg.error === "EMAIL_EXISTS" ? "Email already registered" : "Sign up failed",
           );

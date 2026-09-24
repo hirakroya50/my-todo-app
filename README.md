@@ -1,6 +1,6 @@
 # dev_todo
 
-Personal dev project checklists: **projects → lists → sections & checkbox items**, optional **links** and **screenshot attachments**, with **Google**, **GitHub**, and **email/password** sign-in (no email verification).
+Personal dev checklists: **one project = one auto-seeded template list** (sections & checkbox items), **project-level notes**, sidebar **workflow guides**, with **Google**, **GitHub**, and **email/password** sign-in (no email verification).
 
 ## Docs
 

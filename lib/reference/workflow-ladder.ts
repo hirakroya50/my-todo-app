@@ -1,0 +1,17 @@
+export const WORKFLOW_LADDER_STEPS = [
+  "Understand Requirements",
+  "Plan & Break Into Tasks",
+  "Design Architecture",
+  "Design Database",
+  "Setup Project",
+  "Build Backend",
+  "Build Frontend",
+  "Integrate Everything",
+  "Test",
+  "Fix Bugs",
+  "Security + Performance",
+  "CI/CD",
+  "Deploy",
+  "Monitor",
+  "Maintain",
+] as const;

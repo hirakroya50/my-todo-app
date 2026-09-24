@@ -1,7 +1,5 @@
 "use client";
 
-import type { ItemAttachment } from "@prisma/client";
-
 import { TodoItemRow } from "@/components/checklist/todo-item-row";
 import {
   AccordionContent,
@@ -14,14 +12,12 @@ export function SectionAccordionItem({
   projectId,
   listId,
   section,
-  attachments,
   searchQuery,
   filterIncomplete,
 }: {
   projectId: string;
   listId: string;
   section: SectionWithItems;
-  attachments: ItemAttachment[];
   searchQuery: string;
   filterIncomplete: boolean;
 }) {
@@ -42,21 +38,18 @@ export function SectionAccordionItem({
     return null;
   }
 
-  const attachmentCountByItem = (itemId: string) =>
-    attachments.filter((a) => a.todoItemId === itemId).length;
-
   return (
-    <AccordionItem value={section.id} className="border-border/60">
-      <AccordionTrigger className="py-2 hover:no-underline">
-        <span className="flex-1 truncate text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <AccordionItem value={section.id} className="border-border/50">
+      <AccordionTrigger className="py-1.5 hover:no-underline">
+        <span className="flex-1 truncate text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           {section.title}
         </span>
-        <span className="mr-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
+        <span className="mr-1 rounded bg-muted px-1 py-0.5 text-[10px] font-medium tabular-nums">
           {done}/{section.items.length}
         </span>
       </AccordionTrigger>
-      <AccordionContent className="pb-2">
-        <div className="grid gap-x-6 gap-y-0 lg:grid-cols-2">
+      <AccordionContent className="pb-1">
+        <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item) => (
             <TodoItemRow
               key={item.id}
@@ -65,7 +58,6 @@ export function SectionAccordionItem({
               sectionId={section.id}
               item={item}
               sectionItems={section.items}
-              attachmentCount={attachmentCountByItem(item.id)}
             />
           ))}
         </div>

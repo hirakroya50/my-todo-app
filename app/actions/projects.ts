@@ -7,6 +7,7 @@ import { toActionError } from "@/lib/errors";
 import {
   createProjectSchema,
   reorderProjectsSchema,
+  updateProjectNotesSchema,
   updateProjectSchema,
 } from "@/lib/schemas/project";
 import * as projectService from "@/lib/services/project.service";
@@ -16,10 +17,39 @@ export async function createProjectAction(input: unknown) {
   try {
     const userId = await requireUserId();
     const data = createProjectSchema.parse(input);
-    const project = await projectService.createProject(userId, data.name);
+    const { project, list } = await projectService.createProjectWithChecklist(
+      userId,
+      data.name,
+    );
     await setLastProjectId(userId, project.id);
     revalidatePath("/projects");
-    return { project };
+    return { project, list };
+  } catch (error) {
+    return toActionError(error);
+  }
+}
+
+export async function updateProjectNotesAction(
+  projectId: string,
+  input: unknown,
+) {
+  try {
+    const userId = await requireUserId();
+    const data = updateProjectNotesSchema.parse(input);
+    await projectService.updateProjectNotes(userId, projectId, data.notes);
+    revalidatePath("/projects");
+    revalidatePath(`/projects/${projectId}`, "layout");
+    return { success: true };
+  } catch (error) {
+    return toActionError(error);
+  }
+}
+
+export async function ensureProjectChecklistAction(projectId: string) {
+  try {
+    const userId = await requireUserId();
+    const list = await projectService.ensureProjectChecklist(userId, projectId);
+    return { list };
   } catch (error) {
     return toActionError(error);
   }

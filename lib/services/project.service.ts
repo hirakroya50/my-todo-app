@@ -1,26 +1,81 @@
 import { db } from "@/lib/db";
 import { assertProjectAccess } from "@/lib/permissions";
+import { seedListFromTemplate } from "@/lib/template/seed";
 import type { SortOrderInput } from "@/lib/types";
+
+const DEFAULT_LIST_TITLE = "Development checklist";
 
 export async function listProjects(userId: string) {
   return db.project.findMany({
     where: { userId },
     orderBy: { sortOrder: "asc" },
     include: {
-      todoLists: { orderBy: { sortOrder: "asc" } },
+      todoLists: { orderBy: { sortOrder: "asc" }, take: 1 },
     },
   });
 }
 
-export async function createProject(userId: string, name: string) {
+export async function getProjectNotes(userId: string, projectId: string) {
+  const project = await assertProjectAccess(userId, projectId);
+  return project.notes ?? "";
+}
+
+export async function createProjectWithChecklist(userId: string, name: string) {
   const maxOrder = await db.project.aggregate({
     where: { userId },
     _max: { sortOrder: true },
   });
   const sortOrder = (maxOrder._max.sortOrder ?? -1) + 1;
-  return db.project.create({
-    data: { userId, name, sortOrder },
+
+  return db.$transaction(async (tx) => {
+    const project = await tx.project.create({
+      data: { userId, name, sortOrder },
+    });
+    const list = await tx.todoList.create({
+      data: {
+        projectId: project.id,
+        title: DEFAULT_LIST_TITLE,
+        sortOrder: 0,
+      },
+    });
+    await seedListFromTemplate(tx, list.id);
+    return { project, list };
   });
+}
+
+/** @deprecated Use createProjectWithChecklist */
+export async function createProject(userId: string, name: string) {
+  const { project } = await createProjectWithChecklist(userId, name);
+  return project;
+}
+
+export async function ensureProjectChecklist(userId: string, projectId: string) {
+  await assertProjectAccess(userId, projectId);
+  const existing = await db.todoList.findFirst({
+    where: { projectId },
+    orderBy: { sortOrder: "asc" },
+  });
+  if (existing) return existing;
+
+  return db.$transaction(async (tx) => {
+    const list = await tx.todoList.create({
+      data: {
+        projectId,
+        title: DEFAULT_LIST_TITLE,
+        sortOrder: 0,
+      },
+    });
+    await seedListFromTemplate(tx, list.id);
+    return list;
+  });
+}
+
+export async function getDefaultListIdForProject(
+  userId: string,
+  projectId: string,
+) {
+  const list = await ensureProjectChecklist(userId, projectId);
+  return list.id;
 }
 
 export async function updateProject(
@@ -32,6 +87,18 @@ export async function updateProject(
   return db.project.update({
     where: { id: projectId },
     data: { name },
+  });
+}
+
+export async function updateProjectNotes(
+  userId: string,
+  projectId: string,
+  notes: string | null,
+) {
+  await assertProjectAccess(userId, projectId);
+  return db.project.update({
+    where: { id: projectId },
+    data: { notes },
   });
 }
 

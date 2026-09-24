@@ -35,7 +35,7 @@ export default async function ProjectsPage() {
       <div className="max-w-sm text-center">
         <h1 className="text-sm font-semibold">Projects</h1>
         <p className="mt-1 text-xs text-muted-foreground">
-          Use the sidebar to add a project and template list.
+          Use the sidebar to add a project (checklist is created automatically).
         </p>
         {projects.length > 0 && (
           <ul className="mt-4 divide-y rounded-md border text-left text-sm">

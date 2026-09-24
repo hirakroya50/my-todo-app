@@ -19,9 +19,11 @@ flowchart LR
 
 ## Main layout (checklist view)
 
-**Render order in main column:** `ListHeader` → **`ListAttachmentPanel`** → `ListToolbar` → `SectionAccordion[]`.
+**Shell:** Narrow sidebar (`~11rem`) with projects, three reference guide dialogs (Workflow / Phases / Checklist), and footer (email, theme, logout). No top app header.
 
-List attachments sit **at the top** of the main panel (below list title/progress), **before** toolbar and sections.
+**Project model:** Creating a project auto-seeds one template `TodoList`. `Project.notes` is a single text field (not per checkbox).
+
+**Render order in main column:** Sticky bar (title, progress, filter, expand/collapse) → collapsible **Project notes** → `SectionAccordion[]` with items in a 1–4 column grid.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -40,9 +42,9 @@ List attachments sit **at the top** of the main panel (below list title/progress
 └──────────────┴───────────────────────────────────────────────────────────┘
 ```
 
-- **Left rail:** projects, nested lists, create project/list; collapsible sheet on mobile.
-- **List attachments:** collapsible; upload button; thumbnail strip; list-level files (`todoItemId` null) and optional row-linked files surfaced here or on rows.
-- **UX polish:** expand attachments panel by default when list has attachments; collapsed when empty (optional).
+- **Left rail:** project links only (one checklist per project); reference popups; mobile sheet.
+- **Items:** checkbox + title only in UI (no per-row link/screenshot; use project notes).
+- **UX:** sections collapsed by default; dense rows; 3–4 columns on wide viewports.
 
 ---
 

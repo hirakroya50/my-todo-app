@@ -27,20 +27,23 @@ export async function createProjectWithChecklist(userId: string, name: string) {
   });
   const sortOrder = (maxOrder._max.sortOrder ?? -1) + 1;
 
-  return db.$transaction(async (tx) => {
-    const project = await tx.project.create({
-      data: { userId, name, sortOrder },
-    });
-    const list = await tx.todoList.create({
-      data: {
-        projectId: project.id,
-        title: DEFAULT_LIST_TITLE,
-        sortOrder: 0,
-      },
-    });
-    await seedListFromTemplate(tx, list.id);
-    return { project, list };
-  });
+  return db.$transaction(
+    async (tx) => {
+      const project = await tx.project.create({
+        data: { userId, name, sortOrder },
+      });
+      const list = await tx.todoList.create({
+        data: {
+          projectId: project.id,
+          title: DEFAULT_LIST_TITLE,
+          sortOrder: 0,
+        },
+      });
+      await seedListFromTemplate(tx, list.id);
+      return { project, list };
+    },
+    { maxWait: 30_000, timeout: 120_000 },
+  );
 }
 
 /** @deprecated Use createProjectWithChecklist */
@@ -57,17 +60,20 @@ export async function ensureProjectChecklist(userId: string, projectId: string) 
   });
   if (existing) return existing;
 
-  return db.$transaction(async (tx) => {
-    const list = await tx.todoList.create({
-      data: {
-        projectId,
-        title: DEFAULT_LIST_TITLE,
-        sortOrder: 0,
-      },
-    });
-    await seedListFromTemplate(tx, list.id);
-    return list;
-  });
+  return db.$transaction(
+    async (tx) => {
+      const list = await tx.todoList.create({
+        data: {
+          projectId,
+          title: DEFAULT_LIST_TITLE,
+          sortOrder: 0,
+        },
+      });
+      await seedListFromTemplate(tx, list.id);
+      return list;
+    },
+    { maxWait: 30_000, timeout: 120_000 },
+  );
 }
 
 export async function getDefaultListIdForProject(

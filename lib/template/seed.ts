@@ -7,6 +7,12 @@ export async function seedListFromTemplate(
   todoListId: string,
 ): Promise<void> {
   const template = getTemplateDefinition();
+  const itemRows: {
+    sectionId: string;
+    title: string;
+    sortOrder: number;
+    checked: boolean;
+  }[] = [];
 
   for (let sectionIndex = 0; sectionIndex < template.sections.length; sectionIndex++) {
     const sectionDef = template.sections[sectionIndex];
@@ -18,15 +24,17 @@ export async function seedListFromTemplate(
       },
     });
 
-    if (sectionDef.items.length > 0) {
-      await tx.todoItem.createMany({
-        data: sectionDef.items.map((title, itemIndex) => ({
-          sectionId: section.id,
-          title,
-          sortOrder: itemIndex,
-          checked: false,
-        })),
+    for (let itemIndex = 0; itemIndex < sectionDef.items.length; itemIndex++) {
+      itemRows.push({
+        sectionId: section.id,
+        title: sectionDef.items[itemIndex],
+        sortOrder: itemIndex,
+        checked: false,
       });
     }
+  }
+
+  if (itemRows.length > 0) {
+    await tx.todoItem.createMany({ data: itemRows });
   }
 }

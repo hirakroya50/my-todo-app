@@ -1,9 +1,10 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
-function loadEnvFile(path) {
-  if (!existsSync(path)) return;
-  for (const line of readFileSync(path, "utf8").split("\n")) {
+function loadEnvFile(envPath) {
+  if (!existsSync(envPath)) return;
+  for (const line of readFileSync(envPath, "utf8").split("\n")) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
     const eq = trimmed.indexOf("=");
@@ -41,6 +42,18 @@ if (env.PLAYWRIGHT_BROWSERS_PATH?.includes("sandbox-cache")) {
   delete env.PLAYWRIGHT_BROWSERS_PATH;
 }
 
+const devLockPath = path.join(".next", "lock");
+if (existsSync(devLockPath)) {
+  try {
+    const info = JSON.parse(readFileSync(devLockPath, "utf8"));
+    console.warn(
+      `Note: next dev is running (PID ${info.pid}, port ${info.port}). E2E uses next start on 43124 and does not need dev to stop.`,
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
 function run(command, args) {
   const result = spawnSync(command, args, { stdio: "inherit", env });
   if (result.status !== 0) {
@@ -49,4 +62,5 @@ function run(command, args) {
 }
 
 run("npx", ["prisma", "migrate", "deploy"]);
+run("npm", ["run", "build"]);
 run("npx", ["playwright", "test"]);

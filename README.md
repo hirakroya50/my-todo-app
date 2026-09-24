@@ -25,7 +25,7 @@ Next.js used to print extension console output in the terminal as `[browser] …
 
 **To stop MetaMask completely:** Chrome → Extensions → MetaMask → **Off** or **Remove**, then restart Chrome (broken installs can leave `inpage.js` running).
 
-The site also loads `/block-wallet-extensions.js` to ignore wallet extension errors in the page.
+Wallet extension noise is handled in `instrumentation-client.ts` (before React hydration), not via a `<script>` tag in the layout.
 
 ## Local setup
 

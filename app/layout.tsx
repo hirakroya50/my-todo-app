@@ -33,10 +33,6 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
-      <head>
-        {/* Must load before extension inpage scripts where possible */}
-        <script src="/block-wallet-extensions.js" />
-      </head>
       <body className="min-h-full font-sans antialiased" suppressHydrationWarning>
         <AuthSessionProvider>
           <Providers>{children}</Providers>
